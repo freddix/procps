@@ -1,7 +1,7 @@
 Summary:	Utilities for monitoring your system and processes on your system
 Name:		procps
 Version:	3.3.2
-Release:	3
+Release:	4
 Epoch:		1
 License:	GPL
 Group:		Applications/System
@@ -10,8 +10,7 @@ Source0:	%{name}-%{name}-v%{version}.tar.gz
 # Source0-md5:	89fca32782f9174cf03b5b6b0f76c5ad
 URL:		http://gitorious.org/procps/
 BuildRequires:	ncurses-devel
-Requires(post):	/sbin/ldconfig
-Requires:	fileutils
+Requires:	coreutils
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -73,8 +72,8 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post	-p /usr/sbin/ldconfig
+%postun -p /usr/sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)

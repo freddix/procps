@@ -1,13 +1,13 @@
 Summary:	Utilities for monitoring your system and processes on your system
 Name:		procps
-Version:	3.3.2
-Release:	4
+Version:	3.3.9
+Release:	1
 Epoch:		1
 License:	GPL
 Group:		Applications/System
 # http://gitorious.org/procps/procps/archive-tarball/v3.3.2
-Source0:	%{name}-%{name}-v%{version}.tar.gz
-# Source0-md5:	89fca32782f9174cf03b5b6b0f76c5ad
+Source0:	http://downloads.sourceforge.net/project/procps-ng/Production/%{name}-ng-%{version}.tar.xz
+# Source0-md5:	0980646fa25e0be58f7afb6b98f79d74
 URL:		http://gitorious.org/procps/
 BuildRequires:	ncurses-devel
 Requires:	coreutils
@@ -42,12 +42,12 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 libproc header files.
 
 %prep
-%setup -qn %{name}-%{name}
+%setup -qn %{name}-ng-%{version}
 
-sed -i -e "s#usrbin_execdir=.*#usrbin_execdir='\${bindir}'#g" configure.ac
+%{__sed} -i "s#usrbin_execdir=.*#usrbin_execdir='\${bindir}'#g" configure.ac
 
 %build
-po/update-potfiles
+export CPPFLAGS="-I%{_includedir}/ncurses"
 %{__autopoint}
 %{__libtoolize}
 %{__aclocal} -I m4
@@ -55,8 +55,9 @@ po/update-potfiles
 %{__autoheader}
 %{__automake}
 %configure \
-	CPPFLAGS="-I%{_includedir}/ncurses"	\
-	--disable-static
+	--disable-static    \
+	--enable-watch8bit  \
+	--with-systemd
 %{__make}
 
 %install
@@ -77,36 +78,34 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS BUGS FAQ NEWS README TODO
-%attr(755,root,root) %{_bindir}/ps
-%attr(755,root,root) %{_sbindir}/sysctl
+%doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/free
 %attr(755,root,root) %{_bindir}/pgrep
+%attr(755,root,root) %{_bindir}/pidof
 %attr(755,root,root) %{_bindir}/pkill
 %attr(755,root,root) %{_bindir}/pmap
+%attr(755,root,root) %{_bindir}/ps
 %attr(755,root,root) %{_bindir}/pwdx
-%attr(755,root,root) %{_bindir}/skill
 %attr(755,root,root) %{_bindir}/slabtop
-%attr(755,root,root) %{_bindir}/snice
 %attr(755,root,root) %{_bindir}/tload
 %attr(755,root,root) %{_bindir}/top
 %attr(755,root,root) %{_bindir}/uptime
 %attr(755,root,root) %{_bindir}/vmstat
 %attr(755,root,root) %{_bindir}/w
 %attr(755,root,root) %{_bindir}/watch
+%attr(755,root,root) %{_sbindir}/sysctl
 
 %attr(755,root,root) %ghost %{_libdir}/libprocps.so.?
 %attr(755,root,root) %{_libdir}/libprocps.so.*.*.*
 
 %{_mandir}/man1/free.1*
 %{_mandir}/man1/pgrep.1*
+%{_mandir}/man1/pidof.1*
 %{_mandir}/man1/pkill.1*
 %{_mandir}/man1/pmap.1*
 %{_mandir}/man1/ps.1*
 %{_mandir}/man1/pwdx.1*
-%{_mandir}/man1/skill.1*
 %{_mandir}/man1/slabtop.1*
-%{_mandir}/man1/snice.1*
 %{_mandir}/man1/tload.1*
 %{_mandir}/man1/top.1*
 %{_mandir}/man1/uptime.1*
